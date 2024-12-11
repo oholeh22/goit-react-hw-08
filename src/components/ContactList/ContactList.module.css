@@ -1,0 +1,47 @@
+.list {
+  list-style-type: none;
+  padding: 0;
+  margin: 0;
+}
+
+.contactItem {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 15px;
+  margin: 10px 0;
+  background-color: #fff;
+  border-radius: 8px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  transition: all 0.3s ease;
+}
+
+.contactItem:hover {
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.2);
+}
+
+.contactInfo {
+  display: flex;
+  align-items: center;
+}
+
+.contactInfo p {
+  margin-left: 8px;
+  font-size: 16px;
+  color: #333;
+}
+
+.contactItem button {
+  background-color: #ff4747;
+  color: white;
+  border: none;
+  border-radius: 5px;
+  padding: 8px 12px;
+  cursor: pointer;
+  font-size: 14px;
+  transition: background-color 0.3s;
+}
+
+.contactItem button:hover {
+  background-color: #e03e3e;
+}

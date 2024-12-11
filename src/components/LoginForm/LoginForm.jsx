@@ -1,20 +1,35 @@
 import { Formik, Form, Field, ErrorMessage } from 'formik';
 import * as Yup from 'yup';
+import { useDispatch } from 'react-redux';
+import { useNavigate } from 'react-router-dom';
+import toast from 'react-hot-toast';
+import { login } from '../../redux/auth/operations'; 
 import css from './LoginForm.module.css';
 
 const LoginForm = () => {
+  const dispatch = useDispatch();
+  const navigate = useNavigate();
+
   const initialValues = {
     email: '',
     password: '',
   };
 
   const validationSchema = Yup.object({
-    email: Yup.string().email('Invalid email address').required('Required'),
-    password: Yup.string().min(6, 'Must be at least 6 characters').required('Required'),
+    email: Yup.string().email('Invalid email address').required('Email is required'),
+    password: Yup.string().min(6, 'Must be at least 6 characters').required('Password is required'),
   });
 
   const handleSubmit = (values, { resetForm }) => {
-    console.log(values);
+    dispatch(login(values))
+      .unwrap()
+      .then((res) => {
+        toast.success(`Welcome back, ${res?.user?.name}!`);
+        navigate('/dashboard'); 
+      })
+      .catch(() => {
+        toast.error('Invalid email or password. Please try again.');
+      });
     resetForm();
   };
 
@@ -42,3 +57,4 @@ const LoginForm = () => {
 };
 
 export default LoginForm;
+

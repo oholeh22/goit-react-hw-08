@@ -1,46 +1,50 @@
-import { createSlice } from '@reduxjs/toolkit';
-import { register, login, logout, refreshUser } from './operations';
+import axios from 'axios';
+import { createAsyncThunk } from '@reduxjs/toolkit';
 
-const initialState = {
-  user: { name: null, email: null },
-  token: null,
-  isLoggedIn: false,
-  isRefreshing: false,
-};
+axios.defaults.baseURL = 'https://connections-api.goit.global/';
 
-const authSlice = createSlice({
-  name: 'auth',
-  initialState,
-  reducers: {},
-  extraReducers: (builder) => {
-    builder
-      .addCase(register.fulfilled, (state, action) => {
-        state.user = action.payload.user;
-        state.token = action.payload.token;
-        state.isLoggedIn = true;
-      })
-      .addCase(login.fulfilled, (state, action) => {
-        state.user = action.payload.user;
-        state.token = action.payload.token;
-        state.isLoggedIn = true;
-      })
-      .addCase(logout.fulfilled, (state) => {
-        state.user = { name: null, email: null };
-        state.token = null;
-        state.isLoggedIn = false;
-      })
-      .addCase(refreshUser.pending, (state) => {
-        state.isRefreshing = true;
-      })
-      .addCase(refreshUser.fulfilled, (state, action) => {
-        state.user = action.payload;
-        state.isLoggedIn = true;
-        state.isRefreshing = false;
-      })
-      .addCase(refreshUser.rejected, (state) => {
-        state.isRefreshing = false;
-      });
-  },
+export const register = createAsyncThunk('auth/register', async (userData, thunkAPI) => {
+  try {
+    const response = await axios.post('/users/signup', userData);
+    axios.defaults.headers.common.Authorization = `Bearer ${response.data.token}`;
+    return response.data;
+  } catch (error) {
+    return thunkAPI.rejectWithValue(error.response?.data?.message || 'Registration failed');
+  }
 });
 
-export const authReducer = authSlice.reducer;
+export const login = createAsyncThunk('auth/login', async (credentials, thunkAPI) => {
+  try {
+    const response = await axios.post('/users/login', credentials);
+    axios.defaults.headers.common.Authorization = `Bearer ${response.data.token}`;
+    return response.data;
+  } catch (error) {
+    return thunkAPI.rejectWithValue(error.response?.data?.message || 'Login failed');
+  }
+});
+
+export const logout = createAsyncThunk('auth/logout', async (_, thunkAPI) => {
+  try {
+    await axios.post('/users/logout');
+    delete axios.defaults.headers.common.Authorization;
+  } catch (error) {
+    return thunkAPI.rejectWithValue(error.response?.data?.message || 'Logout failed');
+  }
+});
+
+export const refreshUser = createAsyncThunk('auth/refresh', async (_, thunkAPI) => {
+  const state = thunkAPI.getState();
+  const persistedToken = state.auth.token;
+
+  if (!persistedToken) {
+    return thunkAPI.rejectWithValue('No token found');
+  }
+
+  try {
+    axios.defaults.headers.common.Authorization = `Bearer ${persistedToken}`;
+    const response = await axios.get('/users/current');
+    return response.data;
+  } catch (error) {
+    return thunkAPI.rejectWithValue(error.response?.data?.message || 'Failed to refresh user');
+  }
+});

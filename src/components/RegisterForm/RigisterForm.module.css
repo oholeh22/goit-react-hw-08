@@ -1,21 +1,25 @@
-.form {
+.wrapper {
   display: flex;
   flex-direction: column;
-  gap: 16px;
-  max-width: 400px;
-  margin: 0 auto;
+  align-items: center;
   padding: 20px;
   background-color: #f9f9f9;
   border-radius: 8px;
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
 }
 
-.label {
+.title {
+  font-size: 24px;
+  margin-bottom: 16px;
+  color: #333;
+}
+
+.form {
   display: flex;
   flex-direction: column;
-  font-size: 14px;
-  font-weight: bold;
-  color: #333;
+  gap: 12px;
+  width: 100%;
+  max-width: 400px;
 }
 
 .input {
@@ -25,13 +29,7 @@
   border-radius: 4px;
 }
 
-.error {
-  margin-top: 4px;
-  font-size: 12px;
-  color: #d32f2f;
-}
-
-.button {
+.submitButton {
   padding: 10px 16px;
   font-size: 16px;
   color: #fff;
@@ -41,6 +39,6 @@
   cursor: pointer;
 }
 
-.button:hover {
+.submitButton:hover {
   background-color: #0056b3;
 }

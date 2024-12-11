@@ -1,9 +1,9 @@
 import { createAsyncThunk } from '@reduxjs/toolkit';
 import axios from 'axios';
 
-axios.defaults.baseURL = 'https://swagger-ui-backend-url';
+axios.defaults.baseURL = 'https://connections-api.goit.global/';
 
-export const register = createAsyncThunk('auth/register', async (credentials, thunkAPI) => {
+export const register = createAsyncThunk('auth/Register', async (credentials, thunkAPI) => {
   try {
     const { data } = await axios.post('/register', credentials);
     return data;
