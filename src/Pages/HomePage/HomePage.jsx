@@ -9,7 +9,7 @@ const HomePage = () => {
       {isLoggedIn ? (
         <p className={css.message}>Go to the <span className={css.highlight}>Contacts</span></p>
       ) : (
-        <h1 className={css.title}>Welcome to our service!<p className={css.par}>Register or log in</p></h1>
+        <h1 className={css.title}>Welcome to our service!<p className={css.par}>Register or Log in</p></h1>
       )}
     </div>
   );
