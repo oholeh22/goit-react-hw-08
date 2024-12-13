@@ -1,50 +1,42 @@
-import { Formik, Form, Field, ErrorMessage } from 'formik';
-import * as Yup from 'yup';
 import { useDispatch } from 'react-redux';
-import { addContact } from '../../redux/contactsOps';;
+import { addContact } from '../../redux/contacts/operations';
+import { useState } from 'react';
 import css from './ContactForm.module.css';
-
-const FeedbackSchema = Yup.object().shape({
-  name: Yup.string()
-    .min(3, 'Too short!')
-    .max(50, 'Too long!')
-    .required('Required'),
-  number: Yup.string()
-    .matches(/^[0-9-]+$/, "The number must contain only numbers and dashes")
-    .min(7, 'Too short number!')
-    .required('Required'),
-});
 
 const ContactForm = () => {
   const dispatch = useDispatch();
+  const [name, setName] = useState('');
+  const [number, setNumber] = useState('');
 
-  const handleSubmit = (values, { resetForm }) => {
-    dispatch(addContact(values)); 
-    resetForm(); 
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    dispatch(addContact({ name, number }));
+    setName('');
+    setNumber('');
   };
 
   return (
-    <Formik
-      initialValues={{ name: '', number: '' }}
-      onSubmit={handleSubmit}
-      validationSchema={FeedbackSchema}
-    >
-      <Form className={css.form}>
-        <div className={css.field}>
-          <label htmlFor="name">Name</label>
-          <Field type="text" name="name" id="name" placeholder="Enter your name" />
-          <ErrorMessage name="name" component="div" className={css.error} />
-        </div>
-        
-        <div className={css.field}>
-          <label htmlFor="number">Number</label>
-          <Field type="text" name="number" id="number" placeholder="Enter your phone" />
-          <ErrorMessage name="number" component="div" className={css.error} />
-        </div>
-        
-        <button type="submit" className={css.btn}>Add Contact</button>
-      </Form>
-    </Formik>
+    <form className={css.form} onSubmit={handleSubmit}>
+      <label>
+        Name
+        <input
+          type="text"
+          value={name}
+          onChange={(e) => setName(e.target.value)}
+          required
+        />
+      </label>
+      <label>
+        Number
+        <input
+          type="tel"
+          value={number}
+          onChange={(e) => setNumber(e.target.value)}
+          required
+        />
+      </label>
+      <button type="submit">Add Contact</button>
+    </form>
   );
 };
 

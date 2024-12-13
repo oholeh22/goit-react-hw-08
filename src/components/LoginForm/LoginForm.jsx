@@ -5,8 +5,10 @@ import { useNavigate } from 'react-router-dom';
 import toast from 'react-hot-toast';
 import { login } from '../../redux/auth/operations'; 
 import css from './LoginForm.module.css';
+import { useState } from 'react';
 
 const LoginForm = () => {
+  const [isSubmitting, setIsSubmitting] = useState(false);
   const dispatch = useDispatch();
   const navigate = useNavigate();
 
@@ -21,18 +23,21 @@ const LoginForm = () => {
   });
 
   const handleSubmit = (values, { resetForm }) => {
+    setIsSubmitting(true);
     dispatch(login(values))
       .unwrap()
       .then((res) => {
         toast.success(`Welcome back, ${res?.user?.name}!`);
-        navigate('/dashboard'); 
+        navigate('/contacts');
       })
       .catch(() => {
         toast.error('Invalid email or password. Please try again.');
+      })
+      .finally(() => {
+        setIsSubmitting(false);
+        resetForm();
       });
-    resetForm();
   };
-
   return (
     <Formik
       initialValues={initialValues}
@@ -50,7 +55,9 @@ const LoginForm = () => {
           <Field name="password" type="password" className={css.input} />
           <ErrorMessage name="password" component="div" className={css.error} />
         </label>
-        <button type="submit" className={css.button}>Log In</button>
+        <button type="submit" className={css.button} disabled={isSubmitting}>
+          {isSubmitting ? 'Logging in...' : 'Log In'}
+        </button>
       </Form>
     </Formik>
   );

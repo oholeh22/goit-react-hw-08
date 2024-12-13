@@ -1,50 +1,52 @@
 import { useEffect } from 'react';
-import { useSelector, useDispatch } from 'react-redux';
-import {
-  fetchContacts,
-  deleteContact,
-} from '../../redux/contactsOps';
-import {
-  selectFilteredContacts,
-  selectLoading,
-  selectError,
-} from '../../redux/contactsSlice';
+import { useDispatch, useSelector } from 'react-redux';
+import { fetchContacts, deleteContact } from '../../redux/contacts/operations';
 import css from './ContactList.module.css';
 
 const ContactList = () => {
   const dispatch = useDispatch();
-  const filteredContacts = useSelector(selectFilteredContacts); 
-  const isLoading = useSelector(selectLoading);
-  const error = useSelector(selectError);
+  const contacts = useSelector((state) => state.contacts.items);
+  const filter = useSelector((state) => state.filters); 
 
   useEffect(() => {
-    dispatch(fetchContacts());
+    dispatch(fetchContacts()); 
   }, [dispatch]);
 
-  return (
-    <div className={css.contactList}>
-      {isLoading && <p>Loading contacts...</p>}
-      {error && <p className={css.error}>Error: {error}</p>}
+  const getFilteredContacts = () => {
+    const normalizedFilter = filter.toLowerCase();
+    return contacts.filter((contact) =>
+      contact.name.toLowerCase().includes(normalizedFilter)
+    );
+  };
 
-      {filteredContacts.length > 0 ? (
-        <ul className={css.contacts}>
-          {filteredContacts.map(({ id, name, number }) => (
-            <li key={id} className={css.contactItem}>
-              <span>{name}: {number}</span>
-              <button
-                onClick={() => dispatch(deleteContact(id))}
-                className={css.deleteButton}
-              >
-                Delete
-              </button>
-            </li>
-          ))}
-        </ul>
-      ) : (
-        !isLoading && <p>No contacts found</p>
-      )}
-    </div>
+  const filteredContacts = getFilteredContacts();
+
+  const handleDelete = (id) => {
+    dispatch(deleteContact(id));
+  };
+
+  if (!contacts.length) {
+    return <p>No contacts found.</p>;
+  }
+
+  return (
+    <ul className={css.list}>
+      {filteredContacts.map(({ id, name, number }) => (
+        <li key={id} className={css.item}>
+          <span className={css.name}>{name}</span>
+          <span className={css.number}>{number}</span>
+          <button
+            className={css.button}
+            onClick={() => handleDelete(id)}
+          >
+            Delete
+          </button>
+        </li>
+      ))}
+    </ul>
   );
 };
 
 export default ContactList;
+
+

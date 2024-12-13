@@ -1,34 +1,34 @@
-import axios from 'axios';
+import api from '../../api';
 import { createAsyncThunk } from '@reduxjs/toolkit';
-
-axios.defaults.baseURL = 'https://connections-api.goit.global/';
+import { setAuthHeader, clearAuthHeader } from '../../api';
 
 export const register = createAsyncThunk('auth/register', async (userData, thunkAPI) => {
   try {
-    const response = await axios.post('/users/signup', userData);
-    axios.defaults.headers.common.Authorization = `Bearer ${response.data.token}`;
+    const response = await api.post('/users/signup', userData);
+    setAuthHeader(response.data.token); 
     return response.data;
   } catch (error) {
-    return thunkAPI.rejectWithValue(error.response?.data?.message || 'Registration failed');
+    return thunkAPI.rejectWithValue(error.message || 'Registration failed');
   }
 });
 
 export const login = createAsyncThunk('auth/login', async (credentials, thunkAPI) => {
   try {
-    const response = await axios.post('/users/login', credentials);
-    axios.defaults.headers.common.Authorization = `Bearer ${response.data.token}`;
+    const response = await api.post('/users/login', credentials);
+    setAuthHeader(response.data.token); 
     return response.data;
   } catch (error) {
-    return thunkAPI.rejectWithValue(error.response?.data?.message || 'Login failed');
+    return thunkAPI.rejectWithValue(error.message || 'Login failed');
   }
 });
 
 export const logout = createAsyncThunk('auth/logout', async (_, thunkAPI) => {
   try {
-    await axios.post('/users/logout');
-    delete axios.defaults.headers.common.Authorization;
+    await api.post('/users/logout');
   } catch (error) {
-    return thunkAPI.rejectWithValue(error.response?.data?.message || 'Logout failed');
+    return thunkAPI.rejectWithValue(error.message || 'Logout failed');
+  } finally {
+    clearAuthHeader(); 
   }
 });
 
@@ -41,10 +41,10 @@ export const refreshUser = createAsyncThunk('auth/refresh', async (_, thunkAPI) 
   }
 
   try {
-    axios.defaults.headers.common.Authorization = `Bearer ${persistedToken}`;
-    const response = await axios.get('/users/current');
+    setAuthHeader(persistedToken); 
+    const response = await api.get('/users/current');
     return response.data;
   } catch (error) {
-    return thunkAPI.rejectWithValue(error.response?.data?.message || 'Failed to refresh user');
+    return thunkAPI.rejectWithValue(error.message || 'Failed to refresh user');
   }
 });
