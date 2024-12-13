@@ -1,47 +1,46 @@
-import api from '../../api';
 import { createAsyncThunk } from '@reduxjs/toolkit';
-import { setAuthHeader, clearAuthHeader } from '../../api';
+import api, { setAuthHeader, clearAuthHeader } from '../../api';
 
 export const register = createAsyncThunk('auth/register', async (userData, thunkAPI) => {
   try {
     const response = await api.post('/users/signup', userData);
-    setAuthHeader(response.data.token); 
+    setAuthHeader(response.data.token);
     return response.data;
   } catch (error) {
     return thunkAPI.rejectWithValue(error.message || 'Registration failed');
   }
 });
 
-export const login = createAsyncThunk('auth/login', async (credentials, thunkAPI) => {
+export const logIn = createAsyncThunk('auth/login', async (credentials, thunkAPI) => {
   try {
     const response = await api.post('/users/login', credentials);
-    setAuthHeader(response.data.token); 
+    setAuthHeader(response.data.token);
     return response.data;
   } catch (error) {
     return thunkAPI.rejectWithValue(error.message || 'Login failed');
   }
 });
 
-export const logout = createAsyncThunk('auth/logout', async (_, thunkAPI) => {
+export const logOut = createAsyncThunk('auth/logout', async (_, thunkAPI) => {
   try {
     await api.post('/users/logout');
   } catch (error) {
     return thunkAPI.rejectWithValue(error.message || 'Logout failed');
   } finally {
-    clearAuthHeader(); 
+    clearAuthHeader();
   }
 });
 
 export const refreshUser = createAsyncThunk('auth/refresh', async (_, thunkAPI) => {
   const state = thunkAPI.getState();
-  const persistedToken = state.auth.token;
+  const token = state.auth.token;
 
-  if (!persistedToken) {
+  if (!token) {
     return thunkAPI.rejectWithValue('No token found');
   }
 
   try {
-    setAuthHeader(persistedToken); 
+    setAuthHeader(token);
     const response = await api.get('/users/current');
     return response.data;
   } catch (error) {

@@ -3,7 +3,7 @@ import { useDispatch } from 'react-redux';
 import { register } from '../../redux/auth/operations';
 import { useNavigate } from 'react-router-dom';
 import toast from 'react-hot-toast';
-import css from './RigisterForm.module.css';
+import css from './RegistrationForm.module.css';
 
 const RegisterForm = () => {
   const dispatch = useDispatch();

@@ -3,11 +3,11 @@ import * as Yup from 'yup';
 import { useDispatch } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
 import toast from 'react-hot-toast';
-import { login } from '../../redux/auth/operations'; 
+import { logIn } from '../../redux/auth/operations'; 
 import css from './LoginForm.module.css';
 import { useState } from 'react';
 
-const LoginForm = () => {
+const LogInForm = () => {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const dispatch = useDispatch();
   const navigate = useNavigate();
@@ -24,7 +24,7 @@ const LoginForm = () => {
 
   const handleSubmit = (values, { resetForm }) => {
     setIsSubmitting(true);
-    dispatch(login(values))
+    dispatch(logIn(values))
       .unwrap()
       .then((res) => {
         toast.success(`Welcome back, ${res?.user?.name}!`);
@@ -63,5 +63,5 @@ const LoginForm = () => {
   );
 };
 
-export default LoginForm;
+export default LogInForm;
 

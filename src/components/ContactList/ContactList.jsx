@@ -13,7 +13,10 @@ const ContactList = () => {
   }, [dispatch]);
 
   const getFilteredContacts = () => {
-    const normalizedFilter = filter.toLowerCase();
+    if (!contacts) {
+      return [];
+    }
+    const normalizedFilter = filter ? filter.toLowerCase() : '';
     return contacts.filter((contact) =>
       contact.name.toLowerCase().includes(normalizedFilter)
     );
