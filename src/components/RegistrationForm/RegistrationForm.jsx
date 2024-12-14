@@ -14,7 +14,7 @@ const RegisterForm = () => {
       .unwrap()
       .then((res) => {
         toast.success(`Welcome, ${res?.user?.name}!`);
-        navigate('/tasks'); 
+        navigate('/contacts'); 
       })
       .catch(() => {
         toast.error('Oops! Something went wrong. Please try again.');
